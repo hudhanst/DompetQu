@@ -1,32 +1,9 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import * as SQLite from 'expo-sqlite';
 
-const todosSlice = createSlice({
-    name: 'todos',
-    initialState: [],
-    reducers: {
-        todoAdded(state, action) {
-            state.push({
-                id: action.payload.id,
-                text: action.payload.text,
-                completed: false
-            })
-        },
-        todoToggled(state, action) {
-            const todo = state.find(todo => todo.id === action.payload)
-            todo.completed = !todo.completed
-        },
-        LoadDB(state) {
-            console.log(111111111111)
-        }
-    }
-})
-
-export const LoadUser = createAsyncThunk(
-    'content/fetchContent',
-    async () => {
+export const Load_User = () => async () => {
+    try {
         console.log(2)
-        const db = await SQLite.openDatabaseAsync('myDabaseName.db');
+        const db = await SQLite.openDatabaseAsync('databaseName');
         // `execAsync()` is useful for bulk queries when you want to execute altogether.
         // Please note that `execAsync()` does not escape parameters and may lead to SQL injection.
         await db.execAsync(`
@@ -59,24 +36,7 @@ export const LoadUser = createAsyncThunk(
             console.log(row.id, row.value, row.intValue);
         }
         console.log(3)
-        return null
+    } catch (err) {
+        console.log("🚀 ~ constLoad_User= ~ err:", err)
     }
-)
-export const LoadUserData = createAsyncThunk(
-    'content/LoadUserData',
-    async () => {
-        console.log('---------------------------')
-        const db = await SQLite.openDatabaseAsync('myDabaseName.db');
-
-        const allRows = await db.getAllAsync('SELECT * FROM test');
-        for (const row of allRows) {
-            console.log(row.id, row.value, row.intValue);
-        }
-
-
-        return null
-    }
-)
-
-export const { todoAdded, todoToggled, LoadDB } = todosSlice.actions
-export default todosSlice.reducer
+}
